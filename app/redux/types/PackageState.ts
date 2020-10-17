@@ -6,4 +6,5 @@ export interface PackageState{
     isLoading: boolean;
     recommendedLocation : LocationInfo;
     isTransferLoading: boolean;
+    needFetch: boolean;
 }

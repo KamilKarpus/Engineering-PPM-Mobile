@@ -56,7 +56,7 @@ export const tranferRequestCreate = (
             .then(async () =>{
                 await dispatch({
                     type: TRANSFER_FINISHED
-                })
+                });
             })
     });
 }

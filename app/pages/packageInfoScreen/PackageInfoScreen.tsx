@@ -23,6 +23,8 @@ type ParamList = {
 interface StateProps{
     isLoading: boolean;
     package: PackageInfo;
+    isTransferLoading : boolean;
+    needFetch : boolean;
 }
 
 interface DispatchProps{
@@ -37,10 +39,20 @@ const PackageInfoScreen = (props: Props) =>{
     const navigation = useNavigation();
 
 
-    const route = useRoute<RouteProp<ParamList, 'Info'>>();
-    useEffect(()=>{
-        props.loadPackage(route.params.OrderId, route.params.PackageId);
+    
 
+
+    const route = useRoute<RouteProp<ParamList, 'Info'>>();
+
+
+    useEffect(()=>{
+        if(props.needFetch){
+            props.loadPackage(route.params.OrderId, route.params.PackageId); 
+        }
+    })
+
+    useEffect(()=>{
+        props.loadPackage(route.params.OrderId, route.params.PackageId);     
     }, [])
 
     return(
@@ -55,7 +67,7 @@ const PackageInfoScreen = (props: Props) =>{
         <View style={styles.body}>
             <View style={styles.bodyItem}>
                 <Text style={styles.textHeader}>Postęp:</Text>
-                <Progress.Bar progress={props.package.progress} width={350} height={20} />
+                <Progress.Bar progress={props.package.progress/100} width={350} height={20} />
             </View>
         <View style={styles.bodyItem}>
             <Text style={styles.textHeader}>Lokalizacja:</Text>
@@ -176,7 +188,9 @@ const mapDispatch = (
   const mapStateToProps = (store: AppState) => {
     return {
         isLoading: store.package.isLoading,
-        package: store.package.package
+        package: store.package.package,
+        isTransferLoading: store.package.isTransferLoading,
+        needFetch: store.package.needFetch
     };
   };
 

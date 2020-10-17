@@ -1,16 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { PPMButton, PPMInput } from '../../components/common';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 interface Props{
     title: string;
     message: string;
     onClose() : void;
     onYes() : void;
+    loadingMessage: string;
+    isLoading : boolean;
 };
 
 const MessageScreen = (props : Props) =>{
     return(
+        <>
+        { props.isLoading ? <LoadingSpinner message={props.loadingMessage}/> :
         <View  style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerText}>{props.title}</Text>
@@ -31,6 +36,8 @@ const MessageScreen = (props : Props) =>{
                 </View>
             </View>
         </View>
+        }
+        </>
     )
 }
 

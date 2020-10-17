@@ -29,7 +29,8 @@ const initialState = {
         shortName: "",
         locationType: 0
     },
-    isTransferLoading: false
+    isTransferLoading: false,
+    needFetch: false
     
 }
 
@@ -38,7 +39,9 @@ export function packageReducer(state: PackageState = initialState, action : Pack
         case FETCHING_DATA:{
             return{
                 ...state,
-                isLoading: true
+                isLoading: true,
+                recommendedLocation: initialState.recommendedLocation,
+                needFetch: false,
             }
         }
         case FETCHED_PACKAGE:{
@@ -58,13 +61,14 @@ export function packageReducer(state: PackageState = initialState, action : Pack
         case REQUEST_TRANSFER:{
             return{
                 ...state,
-                isTransferLoading: true
+                isTransferLoading: true,
             }
         }
         case TRANSFER_FINISHED:{
             return{
                 ...state,
-                isTransferLoading: false
+                isTransferLoading: false,
+                needFetch: true
             }
         }
         default:{

@@ -1,4 +1,4 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { LocationInfo } from '../../model/LocationInfo';
-import { getRecommendation, tranferRequestCreate } from '../../redux/actions/thunkActions/Package-ThunkActions';
+import { fetchPackage, getRecommendation, tranferRequestCreate } from '../../redux/actions/thunkActions/Package-ThunkActions';
 import { AppState } from '../../redux/ReduxConfiguration';
 import Icon from 'react-native-vector-icons/Feather';
 import MessageScreen from '../messageScreen/MessageScreen';
@@ -19,14 +19,17 @@ type ParamList = {
 }
 
 interface StateProps{
-    isLoading: boolean;
+    isTransferLoading: boolean;
     location: LocationInfo;
     package: PackageInfo;
+    isLoading : boolean;
+    needFetch: boolean;
 }
 
 interface DispatchProps{
     loadRecommendation(packageId : string) : void;
     tranferLocation(packageId: string,fromLocationId: string,toLocationId: string) : void;
+    loadPackage(orderId: string, packageId : string) : void;
 }
 
 type Props = StateProps & DispatchProps;
@@ -34,30 +37,56 @@ type Props = StateProps & DispatchProps;
 const SelectPackegeLocationScreen = (props : Props) =>{
 
     const [isOpen, setOpen] = React.useState(false);
+    const [recommendationEnabled, setRec] = React.useState(false);
+    const navigation = useNavigation();
 
     const onYes = ()=>{
         props.tranferLocation(props.package.packageId, props.package.locationId,
             props.location.id);
     };
 
+console.log(props.needFetch);
+
+    useEffect(()=>{
+        if(props.needFetch){
+            onClose();
+            navigation.goBack();
+        }
+    }, [props.needFetch])
+
+
     const onClose = ()=>{
         setOpen(false);
     }
-    const route = useRoute<RouteProp<ParamList, 'Recommendation'>>();
+    const route = useRoute<RouteProp<ParamList, 'Recommendation'>>()
+    
     useEffect(()=>{
         props.loadRecommendation(route.params.packageId);
     },[]);
+
+
+    useEffect(()=>{
+        console.log(props.location);
+        if(props.location.name){
+            setRec(true);
+        }else{
+            setRec(false);
+        }
+    }, [props.isLoading])
+
     return(
         <>
-        { props.isLoading && <LoadingSpinner message="Trwa przenoszenie paczki..."/>}
+        { props.isLoading ? <LoadingSpinner message="Trwa ładowanie rekomendacji..." /> :
+        <>
         { isOpen ?  <MessageScreen title="Wymagana zgoda" message="Czy chcesz przenieść paczkę na rekomendowaną lokalizację?"
-            onClose = {onClose} onYes={onYes}
+            onClose = {onClose} onYes={onYes} loadingMessage="Trwa przenoszenie paczki..." isLoading={props.isTransferLoading}
         /> : 
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerText}>Akcje</Text>
             </View>
             <View style={styles.body}>
+            { recommendationEnabled && 
             <TouchableOpacity style={styles.recommendedItem} onPress={
                 ()=>{
                     setOpen(true);
@@ -71,6 +100,7 @@ const SelectPackegeLocationScreen = (props : Props) =>{
                     </View>
                 </View>
             </TouchableOpacity>
+            }
             <TouchableOpacity style={styles.searchLocation}>
             <View style={styles.infoRow}>
                     <Icon name="search" size={48} color="white" style={styles.border}/>
@@ -82,6 +112,8 @@ const SelectPackegeLocationScreen = (props : Props) =>{
             </TouchableOpacity>
             </View>
         </View>
+        }
+        </>
         }
         </>
     )
@@ -157,17 +189,21 @@ const mapDispatch = (
         loadRecommendation :(packageId : string) : void => (
             dispatch(getRecommendation(packageId))
         ),
-        tranferLocation :(packageId: string,fromLocationId: string,toLocationId: string) : void=>(
+        tranferLocation :(packageId: string,fromLocationId: string,toLocationId: string) : void =>(
             dispatch(tranferRequestCreate(packageId, fromLocationId, toLocationId))
         ),
-
+        loadPackage :(orderId: string, packageId : string) : void => (
+            dispatch(fetchPackage(orderId, packageId))
+        )
     }
   }
   const mapStateToProps = (store: AppState) => {
     return {
-        isLoading: store.package.isTransferLoading,
+        isTransferLoading: store.package.isTransferLoading,
         location: store.package.recommendedLocation,
-        package: store.package.package
+        package: store.package.package,
+        isLoading : store.package.isLoading,
+        needFetch : store.package.needFetch
     };
   };
 
