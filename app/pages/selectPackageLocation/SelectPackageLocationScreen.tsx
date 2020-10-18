@@ -45,7 +45,6 @@ const SelectPackegeLocationScreen = (props : Props) =>{
             props.location.id);
     };
 
-console.log(props.needFetch);
 
     useEffect(()=>{
         if(props.needFetch){
