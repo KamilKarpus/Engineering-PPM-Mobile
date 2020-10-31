@@ -67,7 +67,11 @@ export const tranferRequestCreate = (
                 await dispatch({
                     type: TRANSFER_FINISHED
                 });
+            }).catch(err =>{
+                console.log(err);
             })
+    }).catch(err =>{
+        console.log(err);
     });
 }
 

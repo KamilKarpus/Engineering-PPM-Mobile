@@ -7,6 +7,7 @@ import HomePage from './app/pages/homePage/HomePage';
 import LoginPage from './app/pages/loginPage/LoginPage';
 import PackageInfoScreen from './app/pages/packageInfoScreen/PackageInfoScreen';
 import ScannerScreen from './app/pages/scanScreen/ScanScreen';
+import LocationsScreen from './app/pages/locationsScreen/LocationScreen';
 import SelectPackageLocationScreen from './app/pages/selectPackageLocation/SelectPackageLocationScreen';
 import { configureStore } from './app/redux';
 
@@ -23,6 +24,7 @@ export default function App() {
       <Stack.Screen options={{headerShown: false}} name="Scan" component={ScannerScreen} />
       <Stack.Screen options={{headerShown: false}} name="Info" component={PackageInfoScreen} />
       <Stack.Screen options={{headerShown: false}} name="Recommendation" component={SelectPackageLocationScreen} />
+      <Stack.Screen options={{headerShown: false}} name="Locations" component={LocationsScreen}/>
     </Stack.Navigator>
     </NavigationContainer>
     </Provider>

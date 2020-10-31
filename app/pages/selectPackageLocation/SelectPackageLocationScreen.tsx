@@ -39,10 +39,10 @@ const SelectPackegeLocationScreen = (props : Props) =>{
     const [isOpen, setOpen] = React.useState(false);
     const [recommendationEnabled, setRec] = React.useState(false);
     const navigation = useNavigation();
-
     const onYes = ()=>{
         props.tranferLocation(props.package.packageId, props.package.locationId,
             props.location.id);
+
     };
 
 
@@ -94,13 +94,17 @@ const SelectPackegeLocationScreen = (props : Props) =>{
                 <View style={styles.infoRow}>
                     <Icon name="move" size={48} color="white" style={styles.border}/>
                     <View style={styles.marginLeft}>
-                        <Text style={styles.textWhite}>{props.location.shortName}  - {props.location.name}</Text>
+                        <Text style={styles.textWhite}>{props.location.shortName} - {props.location.name}</Text>
                         <Text style={styles.textGrey}>Rekomendowana</Text>
                     </View>
                 </View>
             </TouchableOpacity>
             }
-            <TouchableOpacity style={styles.searchLocation}>
+            <TouchableOpacity style={styles.searchLocation} onPress={
+                ()=>{
+                    navigation.navigate('Locations');
+                }
+            }>
             <View style={styles.infoRow}>
                     <Icon name="search" size={48} color="white" style={styles.border}/>
                     <View style={styles.marginLeft}>
